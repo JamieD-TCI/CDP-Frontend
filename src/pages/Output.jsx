@@ -426,26 +426,31 @@ export const Output = () => {
             Protein ID: {replacementModal.id}
           </p>
 
-          <div className="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
-            <p className="mb-4">
-              AI models expect only the 20 standard amino acids. Replacing invalid characters with <strong>'G'</strong> prevents model crashes, maintains correct sequence length, and preserves accurate cysteine position indexing for predictions.
-            </p>
-            
-            <div className="border border-slate-250 dark:border-slate-800 rounded-lg overflow-hidden max-h-60 overflow-y-auto">
-              <table className="w-full text-left font-medium">
+          <div className="mb-6">
+            <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden overflow-x-auto max-h-60">
+              <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-850 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
-                    <th className="px-4 py-2">Position</th>
-                    <th className="px-4 py-2">Original Residue</th>
-                    <th className="px-4 py-2">Replacement</th>
+                  <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-600">
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Position</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold">Original Residue</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono text-xs">
+                <tbody>
                   {replacementModal.replacements.map((rep, idx) => (
-                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                      <td className="px-4 py-2 text-slate-900 dark:text-slate-100 font-semibold">{rep.position}</td>
-                      <td className="px-4 py-2 text-red-600 dark:text-red-400 font-bold">{rep.original_residue}</td>
-                      <td className="px-4 py-2 text-green-600 dark:text-green-400 font-bold">{rep.replacement}</td>
+                    <tr
+                      key={idx}
+                      className={`border-b border-slate-200 dark:border-slate-700 ${
+                        idx % 2 === 0
+                          ? 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                          : 'bg-slate-50/50 dark:bg-slate-800/20 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                      }`}
+                    >
+                      <td className="px-4 py-3 text-sm font-semibold text-slate-900 dark:text-slate-50 font-mono">
+                        {rep.position}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 font-mono">
+                        {rep.original_residue}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
