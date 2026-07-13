@@ -16,7 +16,7 @@ export const Output = () => {
   const [detailSearch, setDetailSearch] = useState('');
   const [sequenceModal, setSequenceModal] = useState(null);
   const [modalCopied, setModalCopied] = useState(false);
-  const [probabilityFilter, setProbabilityFilter] = useState(null); // null, 'high', 'low', 'undetectable'
+  const [probabilityFilter, setProbabilityFilter] = useState(null); // null, 'detectable_high', 'detectable_low', 'undetectable_high', 'undetectable_low'
 
   const { resultsData } = state;
   const metadata = resultsData ? resultsData.metadata : null;
@@ -47,21 +47,25 @@ export const Output = () => {
   // Process summary data
   const summaryData = useMemo(() => {
     return results.map((protein) => {
-      const high_prob = protein.cysteines.filter(
+      const det_high = protein.cysteines.filter(
         (c) => c.detectable && c.confidence > threshold
       ).length;
-      const low_prob = protein.cysteines.filter(
+      const det_low = protein.cysteines.filter(
         (c) => c.detectable && c.confidence <= threshold
       ).length;
-      const undetectable = protein.cysteines.filter(
-        (c) => !c.detectable
+      const undet_high = protein.cysteines.filter(
+        (c) => !c.detectable && c.confidence > threshold
+      ).length;
+      const undet_low = protein.cysteines.filter(
+        (c) => !c.detectable && c.confidence <= threshold
       ).length;
       return {
         ...protein,
         total_cysteines: protein.cysteines.length,
-        high_prob_cysteines: high_prob,
-        low_prob_cysteines: low_prob,
-        undetectable_cysteines: undetectable,
+        detectable_high_cysteines: det_high,
+        detectable_low_cysteines: det_low,
+        undetectable_high_cysteines: undet_high,
+        undetectable_low_cysteines: undet_low,
       };
     });
   }, [results, threshold]);
@@ -91,14 +95,17 @@ export const Output = () => {
 
     const mapped = protein.cysteines;
 
-    if (probabilityFilter === 'high') {
+    if (probabilityFilter === 'detectable_high') {
       return mapped.filter((c) => c.detectable && c.confidence > threshold);
     }
-    if (probabilityFilter === 'low') {
+    if (probabilityFilter === 'detectable_low') {
       return mapped.filter((c) => c.detectable && c.confidence <= threshold);
     }
-    if (probabilityFilter === 'undetectable') {
-      return mapped.filter((c) => !c.detectable);
+    if (probabilityFilter === 'undetectable_high') {
+      return mapped.filter((c) => !c.detectable && c.confidence > threshold);
+    }
+    if (probabilityFilter === 'undetectable_low') {
+      return mapped.filter((c) => !c.detectable && c.confidence <= threshold);
     }
     return mapped;
   }, [selectedProtein, results, threshold, probabilityFilter]);
@@ -136,9 +143,10 @@ export const Output = () => {
         const descFields = [
           'sequence_length',
           'total_cysteines',
-          'high_prob_cysteines',
-          'low_prob_cysteines',
-          'undetectable_cysteines'
+          'detectable_high_cysteines',
+          'detectable_low_cysteines',
+          'undetectable_high_cysteines',
+          'undetectable_low_cysteines'
         ];
         const defaultAsc = !descFields.includes(field);
         return { field, asc: defaultAsc };
@@ -175,18 +183,20 @@ export const Output = () => {
       'Sequence',
       'Sequence Length',
       'Total Cysteines',
-      'High Prob Cysteines',
-      'Low Prob Cysteines',
-      'Undetectable Cysteines',
+      'Detectable High Cysteines',
+      'Detectable Low Cysteines',
+      'Undetectable High Cysteines',
+      'Undetectable Low Cysteines',
     ];
     const rows = filteredSummary.map((p) => [
       p.protein_id,
       p.sequence || 'N/A',
       p.sequence_length,
       p.total_cysteines,
-      p.high_prob_cysteines,
-      p.low_prob_cysteines,
-      p.undetectable_cysteines,
+      p.detectable_high_cysteines,
+      p.detectable_low_cysteines,
+      p.undetectable_high_cysteines,
+      p.undetectable_low_cysteines,
     ]);
 
     const csv = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
@@ -466,22 +476,29 @@ export const Output = () => {
                 </th>
                 <th className="px-4 py-3 text-center text-sm bg-green-50 dark:bg-green-950/10">
                   <SortHeader
-                    field="high_prob_cysteines"
-                    label="High Prob Cys"
+                    field="detectable_high_cysteines"
+                    label="Det High Cys"
                     onSort={handleSummarySort}
                   />
                 </th>
                 <th className="px-4 py-3 text-center text-sm bg-amber-50 dark:bg-amber-950/10">
                   <SortHeader
-                    field="low_prob_cysteines"
-                    label="Low Prob Cys"
+                    field="detectable_low_cysteines"
+                    label="Det Low Cys"
+                    onSort={handleSummarySort}
+                  />
+                </th>
+                <th className="px-4 py-3 text-center text-sm bg-purple-50 dark:bg-purple-950/10">
+                  <SortHeader
+                    field="undetectable_high_cysteines"
+                    label="Undet High Cys"
                     onSort={handleSummarySort}
                   />
                 </th>
                 <th className="px-4 py-3 text-center text-sm bg-slate-50 dark:bg-slate-900/40">
                   <SortHeader
-                    field="undetectable_cysteines"
-                    label="Undetectable Cys"
+                    field="undetectable_low_cysteines"
+                    label="Undet Low Cys"
                     onSort={handleSummarySort}
                   />
                 </th>
@@ -542,28 +559,37 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center bg-green-50 dark:bg-green-950/10 font-semibold text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('high');
+                          setProbabilityFilter('detectable_high');
                         }}
                       >
-                        {protein.high_prob_cysteines}
+                        {protein.detectable_high_cysteines}
                       </td>
                       <td
                         className="px-4 py-3 text-sm text-center bg-amber-50 dark:bg-amber-950/10 font-semibold text-amber-600 dark:text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('low');
+                          setProbabilityFilter('detectable_low');
                         }}
                       >
-                        {protein.low_prob_cysteines}
+                        {protein.detectable_low_cysteines}
+                      </td>
+                      <td
+                        className="px-4 py-3 text-sm text-center bg-purple-50 dark:bg-purple-950/10 font-semibold text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors cursor-pointer"
+                        onClick={() => {
+                          setSelectedProtein(protein.protein_id);
+                          setProbabilityFilter('undetectable_high');
+                        }}
+                      >
+                        {protein.undetectable_high_cysteines}
                       </td>
                       <td
                         className="px-4 py-3 text-sm text-center bg-slate-50/50 dark:bg-slate-900/10 text-slate-500 dark:text-slate-400 font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/20 transition-colors"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('undetectable');
+                          setProbabilityFilter('undetectable_low');
                         }}
                       >
-                        {protein.undetectable_cysteines}
+                        {protein.undetectable_low_cysteines}
                       </td>
                     </tr>
                   </React.Fragment>
@@ -591,9 +617,10 @@ export const Output = () => {
   // DETAIL VIEW
   const protein = results.find((p) => p.protein_id === selectedProtein);
   const totalCount = protein ? protein.cysteines.length : 0;
-  const highCount = protein ? protein.cysteines.filter(c => c.detectable && c.confidence > threshold).length : 0;
-  const lowCount = protein ? protein.cysteines.filter(c => c.detectable && c.confidence <= threshold).length : 0;
-  const undetectableCount = protein ? protein.cysteines.filter(c => !c.detectable).length : 0;
+  const detHighCount = protein ? protein.cysteines.filter(c => c.detectable && c.confidence > threshold).length : 0;
+  const detLowCount = protein ? protein.cysteines.filter(c => c.detectable && c.confidence <= threshold).length : 0;
+  const undetHighCount = protein ? protein.cysteines.filter(c => !c.detectable && c.confidence > threshold).length : 0;
+  const undetLowCount = protein ? protein.cysteines.filter(c => !c.detectable && c.confidence <= threshold).length : 0;
 
   return (
     <div className="space-y-6">
@@ -665,34 +692,44 @@ export const Output = () => {
             All Cysteines ({totalCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('high')}
+            onClick={() => setProbabilityFilter('detectable_high')}
             className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-              probabilityFilter === 'high'
+              probabilityFilter === 'detectable_high'
                 ? 'bg-green-600 text-white shadow-sm shadow-green-600/10 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            High Probability ({highCount})
+            Detectable High ({detHighCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('low')}
+            onClick={() => setProbabilityFilter('detectable_low')}
             className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-              probabilityFilter === 'low'
+              probabilityFilter === 'detectable_low'
                 ? 'bg-amber-500 text-white shadow-sm shadow-amber-500/10 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            Low Probability ({lowCount})
+            Detectable Low ({detLowCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('undetectable')}
+            onClick={() => setProbabilityFilter('undetectable_high')}
             className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-              probabilityFilter === 'undetectable'
+              probabilityFilter === 'undetectable_high'
+                ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/10 font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
+          >
+            Undetectable High ({undetHighCount})
+          </button>
+          <button
+            onClick={() => setProbabilityFilter('undetectable_low')}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              probabilityFilter === 'undetectable_low'
                 ? 'bg-slate-500 text-white shadow-sm shadow-slate-500/10 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
-            Undetectable ({undetectableCount})
+            Undetectable Low ({undetLowCount})
           </button>
         </div>
 
@@ -740,6 +777,10 @@ export const Output = () => {
                 confidenceColor = isHighConfidence 
                   ? 'text-green-600 dark:text-green-400' 
                   : 'text-amber-600 dark:text-amber-500';
+              } else {
+                confidenceColor = isHighConfidence
+                  ? 'text-purple-600 dark:text-purple-400'
+                  : 'text-slate-400 dark:text-slate-500';
               }
 
               let badgeClass = 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
@@ -747,6 +788,10 @@ export const Output = () => {
                 badgeClass = isHighConfidence
                   ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300'
                   : 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300';
+              } else {
+                badgeClass = isHighConfidence
+                  ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
               }
 
               return (
