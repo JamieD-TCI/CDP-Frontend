@@ -849,7 +849,7 @@ export const Output = () => {
               <th className="px-4 py-3 text-center text-sm">
                 <SortHeader field="confidence" label="Confidence" onSort={handleDetailSort} />
               </th>
-              <th className="px-4 py-3 text-center text-sm bg-green-50 dark:bg-green-950/10">
+              <th className="px-4 py-3 text-center text-sm">
                 <SortHeader field="detectable" label="Detectable?" onSort={handleDetailSort} />
               </th>
               <th className="px-4 py-3 text-left text-sm">
@@ -903,7 +903,7 @@ export const Output = () => {
                       {formatConfidence(cys.confidence, 3)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-center bg-green-50/30 dark:bg-green-950/5">
+                  <td className="px-4 py-3 text-sm text-center">
                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${badgeClass}`}>
                       {cys.detectable ? 'Yes' : 'No'}
                     </span>
