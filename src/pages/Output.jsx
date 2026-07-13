@@ -185,8 +185,8 @@ export const Output = () => {
       'Total Cysteines',
       'Detectable High Cysteines',
       'Detectable Low Cysteines',
-      'Undetectable High Cysteines',
       'Undetectable Low Cysteines',
+      'Undetectable High Cysteines',
     ];
     const rows = filteredSummary.map((p) => [
       p.protein_id,
@@ -195,8 +195,8 @@ export const Output = () => {
       p.total_cysteines,
       p.detectable_high_cysteines,
       p.detectable_low_cysteines,
-      p.undetectable_high_cysteines,
       p.undetectable_low_cysteines,
+      p.undetectable_high_cysteines,
     ]);
 
     const csv = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
@@ -470,35 +470,35 @@ export const Output = () => {
                 <th className="px-4 py-3 text-center text-sm">
                   <SortHeader
                     field="total_cysteines"
-                    label="Total Cys"
+                    label="Total Cysteines"
                     onSort={handleSummarySort}
                   />
                 </th>
                 <th className="px-4 py-3 text-center text-sm bg-green-50 dark:bg-green-950/10">
                   <SortHeader
                     field="detectable_high_cysteines"
-                    label="Det High Cys"
+                    label="Det. Hi Conf."
                     onSort={handleSummarySort}
                   />
                 </th>
                 <th className="px-4 py-3 text-center text-sm bg-amber-50 dark:bg-amber-950/10">
                   <SortHeader
                     field="detectable_low_cysteines"
-                    label="Det Low Cys"
+                    label="Det. Lo Conf."
                     onSort={handleSummarySort}
                   />
                 </th>
-                <th className="px-4 py-3 text-center text-sm bg-purple-50 dark:bg-purple-950/10">
+                <th className="px-4 py-3 text-center text-sm bg-red-50 dark:bg-red-950/10">
                   <SortHeader
-                    field="undetectable_high_cysteines"
-                    label="Undet High Cys"
+                    field="undetectable_low_cysteines"
+                    label="Undet. Lo Conf."
                     onSort={handleSummarySort}
                   />
                 </th>
                 <th className="px-4 py-3 text-center text-sm bg-slate-50 dark:bg-slate-900/40">
                   <SortHeader
-                    field="undetectable_low_cysteines"
-                    label="Undet Low Cys"
+                    field="undetectable_high_cysteines"
+                    label="Undet. Hi Conf."
                     onSort={handleSummarySort}
                   />
                 </th>
@@ -574,22 +574,22 @@ export const Output = () => {
                         {protein.detectable_low_cysteines}
                       </td>
                       <td
-                        className="px-4 py-3 text-sm text-center bg-purple-50 dark:bg-purple-950/10 font-semibold text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-colors cursor-pointer"
-                        onClick={() => {
-                          setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('undetectable_high');
-                        }}
-                      >
-                        {protein.undetectable_high_cysteines}
-                      </td>
-                      <td
-                        className="px-4 py-3 text-sm text-center bg-slate-50/50 dark:bg-slate-900/10 text-slate-500 dark:text-slate-400 font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/20 transition-colors"
+                        className="px-4 py-3 text-sm text-center bg-red-50 dark:bg-red-950/10 font-semibold text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
                           setProbabilityFilter('undetectable_low');
                         }}
                       >
                         {protein.undetectable_low_cysteines}
+                      </td>
+                      <td
+                        className="px-4 py-3 text-sm text-center bg-slate-50/50 dark:bg-slate-900/10 text-slate-500 dark:text-slate-400 font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/20 transition-colors"
+                        onClick={() => {
+                          setSelectedProtein(protein.protein_id);
+                          setProbabilityFilter('undetectable_high');
+                        }}
+                      >
+                        {protein.undetectable_high_cysteines}
                       </td>
                     </tr>
                   </React.Fragment>
@@ -712,24 +712,24 @@ export const Output = () => {
             Detectable Low ({detLowCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('undetectable_high')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-              probabilityFilter === 'undetectable_high'
-                ? 'bg-purple-600 text-white shadow-sm shadow-purple-600/10 font-bold'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-            }`}
-          >
-            Undetectable High ({undetHighCount})
-          </button>
-          <button
             onClick={() => setProbabilityFilter('undetectable_low')}
             className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
               probabilityFilter === 'undetectable_low'
-                ? 'bg-slate-500 text-white shadow-sm shadow-slate-500/10 font-bold'
+                ? 'bg-red-600 text-white shadow-sm shadow-red-600/10 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             Undetectable Low ({undetLowCount})
+          </button>
+          <button
+            onClick={() => setProbabilityFilter('undetectable_high')}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              probabilityFilter === 'undetectable_high'
+                ? 'bg-slate-500 text-white shadow-sm shadow-slate-500/10 font-bold'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
+          >
+            Undetectable High ({undetHighCount})
           </button>
         </div>
 
@@ -779,8 +779,8 @@ export const Output = () => {
                   : 'text-amber-600 dark:text-amber-500';
               } else {
                 confidenceColor = isHighConfidence
-                  ? 'text-purple-600 dark:text-purple-400'
-                  : 'text-slate-400 dark:text-slate-500';
+                  ? 'text-slate-600 dark:text-slate-400'
+                  : 'text-red-600 dark:text-red-500';
               }
 
               let badgeClass = 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300';
@@ -790,8 +790,8 @@ export const Output = () => {
                   : 'bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300';
               } else {
                 badgeClass = isHighConfidence
-                  ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
+                  ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                  : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300';
               }
 
               return (
