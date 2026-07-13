@@ -446,7 +446,7 @@ export const Output = () => {
         </div>
 
         {/* Summary Table */}
-        <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden">
+        <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-600">
@@ -715,9 +715,10 @@ export const Output = () => {
             onClick={() => setProbabilityFilter('undetectable_low')}
             className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
               probabilityFilter === 'undetectable_low'
-                ? 'bg-red-600 text-white shadow-sm shadow-red-600/10 font-bold'
+                ? 'text-white shadow-sm font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
+            style={probabilityFilter === 'undetectable_low' ? { backgroundColor: '#d11720' } : {}}
           >
             Undetectable Low ({undetLowCount})
           </button>
@@ -747,7 +748,7 @@ export const Output = () => {
       </div>
 
       {/* Detail Table */}
-      <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden">
+      <div className="border border-slate-300 dark:border-slate-600 rounded-lg overflow-hidden overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-300 dark:border-slate-600">
