@@ -47,6 +47,23 @@ const MOCK_DATA = {
           notes: 'High probability detectable',
         },
       ],
+      replacements: [
+        {
+          position: 18,
+          original_residue: 'X',
+          replacement: 'G',
+        },
+        {
+          position: 45,
+          original_residue: 'Z',
+          replacement: 'G',
+        },
+        {
+          position: 104,
+          original_residue: 'U',
+          replacement: 'G',
+        },
+      ],
     },
     {
       protein_id: 'sp|P54321|SECONDARY_HUMAN',
@@ -82,6 +99,7 @@ const MOCK_DATA = {
           notes: 'High probability detectable',
         },
       ],
+      replacements: [],
     },
   ],
 };

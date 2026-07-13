@@ -17,6 +17,7 @@ export const Output = () => {
   const [sequenceModal, setSequenceModal] = useState(null);
   const [modalCopied, setModalCopied] = useState(false);
   const [probabilityFilter, setProbabilityFilter] = useState(null); // null, 'detectable_high', 'detectable_low', 'undetectable_high', 'undetectable_low'
+  const [replacementModal, setReplacementModal] = useState(null);
 
   const { resultsData } = state;
   const metadata = resultsData ? resultsData.metadata : null;
@@ -187,6 +188,7 @@ export const Output = () => {
       'Detectable Low Cysteines',
       'Undetectable Low Cysteines',
       'Undetectable High Cysteines',
+      'Replacements',
     ];
     const rows = filteredSummary.map((p) => [
       p.protein_id,
@@ -197,6 +199,7 @@ export const Output = () => {
       p.detectable_low_cysteines,
       p.undetectable_low_cysteines,
       p.undetectable_high_cysteines,
+      p.replacements && p.replacements.length > 0 ? 'Yes' : 'No',
     ]);
 
     const csv = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(',')).join('\n');
@@ -404,6 +407,65 @@ export const Output = () => {
     );
   };
 
+  const renderReplacementModal = () => {
+    if (!replacementModal) return null;
+    return (
+      <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl max-w-2xl w-full shadow-2xl p-6 relative animate-in fade-in zoom-in-95 duration-200">
+          <button
+            onClick={() => setReplacementModal(null)}
+            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 mb-2">
+            Sequence Replacements Report
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mb-4 font-semibold font-mono">
+            Protein ID: {replacementModal.id}
+          </p>
+
+          <div className="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+            <p className="mb-4">
+              AI models expect only the 20 standard amino acids. Replacing invalid characters with <strong>'G'</strong> prevents model crashes, maintains correct sequence length, and preserves accurate cysteine position indexing for predictions.
+            </p>
+            
+            <div className="border border-slate-250 dark:border-slate-800 rounded-lg overflow-hidden max-h-60 overflow-y-auto">
+              <table className="w-full text-left font-medium">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-850 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                    <th className="px-4 py-2">Position</th>
+                    <th className="px-4 py-2">Original Residue</th>
+                    <th className="px-4 py-2">Replacement</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono text-xs">
+                  {replacementModal.replacements.map((rep, idx) => (
+                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                      <td className="px-4 py-2 text-slate-900 dark:text-slate-100 font-semibold">{rep.position}</td>
+                      <td className="px-4 py-2 text-red-600 dark:text-red-400 font-bold">{rep.original_residue}</td>
+                      <td className="px-4 py-2 text-green-600 dark:text-green-400 font-bold">{rep.replacement}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => setReplacementModal(null)}
+              className="px-4 py-2 text-sm font-semibold rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // MASTER VIEW
   if (!selectedProtein) {
     return (
@@ -502,6 +564,9 @@ export const Output = () => {
                     onSort={handleSummarySort}
                   />
                 </th>
+                <th className="px-4 py-3 text-center text-sm font-semibold text-slate-700 dark:text-slate-300">
+                  Replacements
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -591,6 +656,23 @@ export const Output = () => {
                       >
                         {protein.undetectable_high_cysteines}
                       </td>
+                      <td
+                        className={`px-4 py-3 text-sm text-center font-semibold transition-colors ${
+                          protein.replacements && protein.replacements.length > 0
+                            ? 'text-red-600 dark:text-red-400 hover:underline cursor-pointer bg-red-50/10 dark:bg-red-950/5'
+                            : 'text-slate-500 dark:text-slate-400 bg-slate-50/10 dark:bg-slate-900/5'
+                        }`}
+                        onClick={() => {
+                          if (protein.replacements && protein.replacements.length > 0) {
+                            setReplacementModal({
+                              id: protein.protein_id,
+                              replacements: protein.replacements,
+                            });
+                          }
+                        }}
+                      >
+                        {protein.replacements && protein.replacements.length > 0 ? 'Yes' : 'No'}
+                      </td>
                     </tr>
                   </React.Fragment>
                 );
@@ -610,6 +692,7 @@ export const Output = () => {
         </div>
 
         {renderSequenceModal()}
+        {renderReplacementModal()}
       </div>
     );
   }
@@ -840,6 +923,7 @@ export const Output = () => {
       </div>
 
       {renderSequenceModal()}
+      {renderReplacementModal()}
     </div>
   );
 };

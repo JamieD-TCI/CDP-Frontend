@@ -123,16 +123,36 @@ export const Input = () => {
         results: proteinSeqs
           .filter((p) => p.sequence.length > 0)
           .map((p) => {
-            const cysteinePositions = [];
+            const cleanSeqChars = [];
+            const replacements = [];
+            const standardAAs = new Set(['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']);
+            
             for (let i = 0; i < p.sequence.length; i++) {
-              if (p.sequence[i] === 'C') {
+              const char = p.sequence[i].toUpperCase();
+              if (standardAAs.has(char)) {
+                cleanSeqChars.push(p.sequence[i]);
+              } else {
+                cleanSeqChars.push(p.sequence[i] === p.sequence[i].toLowerCase() ? 'g' : 'G');
+                replacements.push({
+                  position: i + 1,
+                  original_residue: p.sequence[i],
+                  replacement: 'G',
+                });
+              }
+            }
+            const cleanSequence = cleanSeqChars.join('');
+
+            const cysteinePositions = [];
+            for (let i = 0; i < cleanSequence.length; i++) {
+              if (cleanSequence[i].toUpperCase() === 'C') {
                 cysteinePositions.push(i + 1);
               }
             }
 
             return {
               protein_id: p.header || `Protein_${cysteinePositions.length}`,
-              sequence_length: p.sequence.length,
+              sequence: cleanSequence,
+              sequence_length: cleanSequence.length,
               cysteines: cysteinePositions.map((pos) => {
                 const rawScore = Math.random(); // raw model output between 0 and 1
                 const detectable = rawScore >= 0.5;
@@ -146,6 +166,7 @@ export const Input = () => {
                   notes: detectable ? 'Predicted detectable region' : 'Predicted undetectable region',
                 };
               }),
+              replacements,
             };
           }),
       };
