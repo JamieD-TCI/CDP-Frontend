@@ -667,8 +667,7 @@ export const Output = () => {
 
           <button
             onClick={() => exportProteinCSV('detectable')}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white rounded-lg transition-colors cursor-pointer shadow-sm animate-fade-in"
-            style={{ backgroundColor: '#ffab24' }}
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-white rounded-lg transition-colors cursor-pointer shadow-sm animate-fade-in"
           >
             <Download className="w-3.5 h-3.5" />
             Export All Detectable
@@ -706,10 +705,9 @@ export const Output = () => {
             onClick={() => setProbabilityFilter('detectable_low')}
             className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
               probabilityFilter === 'detectable_low'
-                ? 'text-white shadow-sm font-bold'
+                ? 'bg-amber-600 dark:bg-amber-500 text-white shadow-sm shadow-amber-600/10 dark:shadow-amber-500/10 font-bold'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
-            style={probabilityFilter === 'detectable_low' ? { backgroundColor: '#ffab24' } : {}}
           >
             Detectable Low ({detLowCount})
           </button>
