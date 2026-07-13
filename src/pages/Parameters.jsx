@@ -16,14 +16,14 @@ const esmModels = [
 const simpleModels = [
   { id: 'esm2_t6_8M_UR50D', label: 'Fast', value: 'fast' },
   { id: 'esm2_t33_650M_UR50D', label: 'Balanced', value: 'balanced' },
-  { id: 'esm2_t36_3B_UR50D', label: 'Accurate', value: 'accurate' },
+  { id: 'esm2_t36_3B_UR50D', label: 'Large', value: 'large' },
 ];
 
 export const Parameters = () => {
   const { state, setStep, updateParameters, resetParameters } = useApp();
   const { parameters } = state;
   const [expandedAccordion, setExpandedAccordion] = useState(false);
-  const [sliderValue, setSliderValue] = useState(1); // 0=Fast, 1=Balanced, 2=Accurate
+  const [sliderValue, setSliderValue] = useState(1); // 0=Fast, 1=Balanced, 2=Large
   const [activeThumb, setActiveThumb] = useState('min');
   const [thresholdInputVal, setThresholdInputVal] = useState('');
   const isAnimatingSlider = useRef(false);
@@ -222,7 +222,7 @@ export const Parameters = () => {
                         ? 'Fast (8M)'
                         : m.label === 'Balanced'
                         ? 'Balanced (650M)'
-                        : 'Accurate (3B)'}
+                        : 'Large (3B)'}
                     </button>
                   ))}
                 </div>
