@@ -219,21 +219,7 @@ YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQ`}
         </p>
       </div>
 
-      {/* Status */}
-      {sequences && (
-        <div className="flex items-center gap-2 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-          <div className="text-sm font-medium text-blue-900 dark:text-blue-100">
-            {isValid ? (
-              <>
-                ✓ Valid sequences detected
-                {state.inputData.fileName && ` (${state.inputData.fileName})`}
-              </>
-            ) : (
-              '✗ Please enter valid amino acid sequences'
-            )}
-          </div>
-        </div>
-      )}
+
 
       {/* Action Buttons */}
       <div className="flex gap-3 justify-end pt-6 border-t border-slate-200 dark:border-slate-700">
