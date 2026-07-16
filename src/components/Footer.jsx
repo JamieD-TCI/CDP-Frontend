@@ -10,7 +10,7 @@ export const Footer = () => {
       <div className="max-w-6xl mx-auto px-6 py-6">
         <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
           <p>
-            The Francis Crick Institute 2026?
+            The Francis Crick Institute - 2026
           </p>
           <a
             href="https://github.com/FrancisCrickInstitute/chemoproteomics-interpretability"
