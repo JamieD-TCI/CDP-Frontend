@@ -19,7 +19,7 @@ export const Footer = () => {
             className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline"
           >
             <Code className="w-3 h-3" />
-            GitHub Docs
+            GitHub Repository
           </a>
         </div>
       </div>
