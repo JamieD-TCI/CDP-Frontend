@@ -16,7 +16,7 @@ export const Output = () => {
   const [detailSearch, setDetailSearch] = useState('');
   const [sequenceModal, setSequenceModal] = useState(null);
   const [modalCopied, setModalCopied] = useState(false);
-  const [probabilityFilter, setProbabilityFilter] = useState(null); // null, 'detectable_high', 'detectable_low', 'undetectable_high', 'undetectable_low'
+  const [confidenceFilter, setConfidenceFilter] = useState(null); // null, 'detectable_high', 'detectable_low', 'undetectable_high', 'undetectable_low'
   const [replacementModal, setReplacementModal] = useState(null);
 
   const { resultsData } = state;
@@ -96,20 +96,20 @@ export const Output = () => {
 
     const mapped = protein.cysteines;
 
-    if (probabilityFilter === 'detectable_high') {
+    if (confidenceFilter === 'detectable_high') {
       return mapped.filter((c) => c.detectable && c.confidence > threshold);
     }
-    if (probabilityFilter === 'detectable_low') {
+    if (confidenceFilter === 'detectable_low') {
       return mapped.filter((c) => c.detectable && c.confidence <= threshold);
     }
-    if (probabilityFilter === 'undetectable_high') {
+    if (confidenceFilter === 'undetectable_high') {
       return mapped.filter((c) => !c.detectable && c.confidence > threshold);
     }
-    if (probabilityFilter === 'undetectable_low') {
+    if (confidenceFilter === 'undetectable_low') {
       return mapped.filter((c) => !c.detectable && c.confidence <= threshold);
     }
     return mapped;
-  }, [selectedProtein, results, threshold, probabilityFilter]);
+  }, [selectedProtein, results, threshold, confidenceFilter]);
 
   // Filter and sort detail
   const filteredDetail = useMemo(() => {
@@ -587,7 +587,7 @@ export const Output = () => {
                         <button
                           onClick={() => {
                             setSelectedProtein(protein.protein_id);
-                            setProbabilityFilter(null);
+                            setConfidenceFilter(null);
                           }}
                           className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left cursor-pointer"
                         >
@@ -607,7 +607,7 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400 cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter(null);
+                          setConfidenceFilter(null);
                         }}
                       >
                         {protein.sequence_length}
@@ -616,7 +616,7 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center text-slate-600 dark:text-slate-400 cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter(null);
+                          setConfidenceFilter(null);
                         }}
                       >
                         {protein.total_cysteines}
@@ -625,7 +625,7 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center bg-green-50 dark:bg-green-950/10 font-semibold text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('detectable_high');
+                          setConfidenceFilter('detectable_high');
                         }}
                       >
                         {protein.detectable_high_cysteines}
@@ -634,7 +634,7 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center bg-amber-50 dark:bg-amber-950/10 font-semibold text-amber-600 dark:text-amber-500 hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('detectable_low');
+                          setConfidenceFilter('detectable_low');
                         }}
                       >
                         {protein.detectable_low_cysteines}
@@ -643,7 +643,7 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center bg-red-50 dark:bg-red-950/10 font-semibold text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors cursor-pointer"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('undetectable_low');
+                          setConfidenceFilter('undetectable_low');
                         }}
                       >
                         {protein.undetectable_low_cysteines}
@@ -652,7 +652,7 @@ export const Output = () => {
                         className="px-4 py-3 text-sm text-center bg-slate-50/50 dark:bg-slate-900/10 text-slate-500 dark:text-slate-400 font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900/20 transition-colors"
                         onClick={() => {
                           setSelectedProtein(protein.protein_id);
-                          setProbabilityFilter('undetectable_high');
+                          setConfidenceFilter('undetectable_high');
                         }}
                       >
                         {protein.undetectable_high_cysteines}
@@ -765,8 +765,8 @@ export const Output = () => {
         {/* Filter Tabs */}
         <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg self-start border border-slate-200 dark:border-slate-700">
           <button
-            onClick={() => setProbabilityFilter(null)}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${probabilityFilter === null
+            onClick={() => setConfidenceFilter(null)}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${confidenceFilter === null
               ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/10 font-bold'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
@@ -774,8 +774,8 @@ export const Output = () => {
             All Cysteines ({totalCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('detectable_high')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${probabilityFilter === 'detectable_high'
+            onClick={() => setConfidenceFilter('detectable_high')}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${confidenceFilter === 'detectable_high'
               ? 'bg-green-600 text-white shadow-sm shadow-green-600/10 font-bold'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
@@ -783,8 +783,8 @@ export const Output = () => {
             Detectable High ({detHighCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('detectable_low')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${probabilityFilter === 'detectable_low'
+            onClick={() => setConfidenceFilter('detectable_low')}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${confidenceFilter === 'detectable_low'
               ? 'bg-amber-600 dark:bg-amber-500 text-white shadow-sm shadow-amber-600/10 dark:shadow-amber-500/10 font-bold'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
@@ -792,18 +792,18 @@ export const Output = () => {
             Detectable Low ({detLowCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('undetectable_low')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${probabilityFilter === 'undetectable_low'
+            onClick={() => setConfidenceFilter('undetectable_low')}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${confidenceFilter === 'undetectable_low'
               ? 'text-white shadow-sm font-bold'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
-            style={probabilityFilter === 'undetectable_low' ? { backgroundColor: '#d11720' } : {}}
+            style={confidenceFilter === 'undetectable_low' ? { backgroundColor: '#d11720' } : {}}
           >
             Undetectable Low ({undetLowCount})
           </button>
           <button
-            onClick={() => setProbabilityFilter('undetectable_high')}
-            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${probabilityFilter === 'undetectable_high'
+            onClick={() => setConfidenceFilter('undetectable_high')}
+            className={`px-4 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${confidenceFilter === 'undetectable_high'
               ? 'bg-slate-500 text-white shadow-sm shadow-slate-500/10 font-bold'
               : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
               }`}
