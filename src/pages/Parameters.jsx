@@ -13,14 +13,14 @@ const esmModels = [
   { id: 'esm_msa1b_t12_100M_UR50S', name: 'ESM-MSA (100M)', layers: 12, params: '100M', dataset: 'UR50S' },
 ];
 
-  /*
-  // Commented out temporary: Unused simpleModels definitions
-  const simpleModels = [
-    { id: 'esm2_t6_8M_UR50D', label: 'Fast', value: 'fast' },
-    { id: 'esm2_t33_650M_UR50D', label: 'Balanced', value: 'balanced' },
-    { id: 'esm2_t36_3B_UR50D', label: 'Large', value: 'large' },
-  ];
-  */
+/*
+// Commented out temporary: Unused simpleModels definitions
+const simpleModels = [
+  { id: 'esm2_t6_8M_UR50D', label: 'Fast', value: 'fast' },
+  { id: 'esm2_t33_650M_UR50D', label: 'Balanced', value: 'balanced' },
+  { id: 'esm2_t36_3B_UR50D', label: 'Large', value: 'large' },
+];
+*/
 
 export const Parameters = () => {
   const { state, setStep, updateParameters, resetParameters } = useApp();
@@ -205,10 +205,10 @@ export const Parameters = () => {
                 {selectedModel?.name || 'ESM-2 (3B)'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                High-capacity evolutionary scale language model optimized for cysteine detectability prediction. Other models are temporarily disabled and planned for future integration.
+                This is currently the only model option, more may become available in future.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-3 gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/50">
               <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/40 text-center">
                 <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">Layers</span>
@@ -391,14 +391,12 @@ export const Parameters = () => {
                 <div key={type} className="flex items-center gap-3">
                   <button
                     onClick={() => handleEmbeddingToggle(type)}
-                    className={`relative w-12 h-6 rounded-full transition-colors ${
-                      parameters.embeddings[type] ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-600'
-                    }`}
+                    className={`relative w-12 h-6 rounded-full transition-colors ${parameters.embeddings[type] ? 'bg-blue-600' : 'bg-slate-300 dark:bg-slate-600'
+                      }`}
                   >
                     <div
-                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
-                        parameters.embeddings[type] ? 'translate-x-6' : 'translate-x-0.5'
-                      }`}
+                      className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${parameters.embeddings[type] ? 'translate-x-6' : 'translate-x-0.5'
+                        }`}
                     />
                   </button>
                   <label className="text-sm font-medium text-slate-700 dark:text-slate-300 capitalize cursor-pointer">
@@ -427,13 +425,12 @@ export const Parameters = () => {
                   key={method}
                   onClick={() => handleMergeMethodChange(method)}
                   disabled={isMergeMethodDisabled}
-                  className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors capitalize ${
-                    isMergeMethodDisabled
+                  className={`flex-1 py-2 px-3 rounded-lg font-medium text-sm transition-colors capitalize ${isMergeMethodDisabled
                       ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
                       : parameters.mergeMethod === method
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600'
-                  }`}
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600'
+                    }`}
                   style={{
                     opacity: isMergeMethodDisabled ? 0.5 : 1,
                   }}
