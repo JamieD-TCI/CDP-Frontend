@@ -114,7 +114,7 @@ const initialState = {
   isDarkMode: false,
   parameters: {
     mode: 'simple', // simple or advanced
-    model: 'esm2_t8_25M_UR50D', // default for simple mode
+    model: 'esm2_t36_3B_UR50D', // locked to 3B model since others are disabled
     embeddings: {
       peptide: true,
       protein: true,

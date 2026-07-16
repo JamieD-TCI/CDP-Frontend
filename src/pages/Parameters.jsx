@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Download, Upload, RotateCcw, ChevronDown } from 'lucide-react';
-import { useApp, formatConfidence } from '../context/AppContext';
+import React, { useState, useEffect } from 'react'; // useRef is temporarily unused
+import { Download, Upload, RotateCcw } from 'lucide-react'; // ChevronDown is temporarily unused
+import { useApp } from '../context/AppContext'; // formatConfidence is temporarily unused
 
 // ESM model definitions for advanced mode
 const esmModels = [
@@ -13,21 +13,38 @@ const esmModels = [
   { id: 'esm_msa1b_t12_100M_UR50S', name: 'ESM-MSA (100M)', layers: 12, params: '100M', dataset: 'UR50S' },
 ];
 
-const simpleModels = [
-  { id: 'esm2_t6_8M_UR50D', label: 'Fast', value: 'fast' },
-  { id: 'esm2_t33_650M_UR50D', label: 'Balanced', value: 'balanced' },
-  { id: 'esm2_t36_3B_UR50D', label: 'Large', value: 'large' },
-];
+  /*
+  // Commented out temporary: Unused simpleModels definitions
+  const simpleModels = [
+    { id: 'esm2_t6_8M_UR50D', label: 'Fast', value: 'fast' },
+    { id: 'esm2_t33_650M_UR50D', label: 'Balanced', value: 'balanced' },
+    { id: 'esm2_t36_3B_UR50D', label: 'Large', value: 'large' },
+  ];
+  */
 
 export const Parameters = () => {
   const { state, setStep, updateParameters, resetParameters } = useApp();
   const { parameters } = state;
-  const [expandedAccordion, setExpandedAccordion] = useState(false);
-  const [sliderValue, setSliderValue] = useState(1); // 0=Fast, 1=Balanced, 2=Large
   const [activeThumb, setActiveThumb] = useState('min');
   const [thresholdInputVal, setThresholdInputVal] = useState('');
-  const isAnimatingSlider = useRef(false);
 
+  /* 
+  // Commented out temporary: Unused state and refs for model selection UI
+  const [expandedAccordion, setExpandedAccordion] = useState(false);
+  const [sliderValue, setSliderValue] = useState(1); // 0=Fast, 1=Balanced, 2=Large
+  const isAnimatingSlider = useRef(false);
+  */
+
+  // Temporary: Ensure model parameter is locked to the 3B model (esm2_t36_3B_UR50D)
+  useEffect(() => {
+    if (parameters.model !== 'esm2_t36_3B_UR50D') {
+      updateParameters({ model: 'esm2_t36_3B_UR50D' });
+    }
+  }, [parameters.model, updateParameters]);
+
+  /* 
+  // Commented out temporary: Slider animation synchronization
+  // (Disabled while only the 3B model is available)
   useEffect(() => {
     if (isAnimatingSlider.current) return;
     const modelIndex = simpleModels.findIndex((m) => m.id === parameters.model);
@@ -35,6 +52,7 @@ export const Parameters = () => {
       setSliderValue(modelIndex);
     }
   }, [parameters.model]);
+  */
 
   useEffect(() => {
     setThresholdInputVal(parameters.confidenceThreshold.toString());
@@ -43,6 +61,8 @@ export const Parameters = () => {
   const selectedModel = esmModels.find((m) => m.id === parameters.model);
 
 
+  /*
+  // Commented out temporary: Unused handler functions for model selection UI
   const handleModeChange = (newMode) => {
     updateParameters({ mode: newMode });
   };
@@ -106,6 +126,7 @@ export const Parameters = () => {
       handleSimpleModelChange(model.value);
     }
   };
+  */
 
   const handleEmbeddingToggle = (type) => {
     const newEmbeddings = {
@@ -160,7 +181,10 @@ export const Parameters = () => {
   const embeddingCount = Object.values(parameters.embeddings).filter(Boolean).length;
   const isMergeMethodDisabled = embeddingCount <= 1;
 
+  /*
+  // Commented out temporary: Unused slider state derivation
   const currentSimpleValue = simpleModels.find((m) => m.id === parameters.model)?.value || 'balanced';
+  */
 
   return (
     <div className="space-y-8">
@@ -171,7 +195,44 @@ export const Parameters = () => {
             Model Selection
           </h2>
 
-          {/* Mode Toggle */}
+          {/* Active Model (Locked to ESM-2 3B Model) */}
+          <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/80 shadow-sm space-y-4">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 mb-2">
+                Active Model
+              </span>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50">
+                {selectedModel?.name || 'ESM-2 (3B)'}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                High-capacity evolutionary scale language model optimized for cysteine detectability prediction. Other models are temporarily disabled and planned for future integration.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/50">
+              <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/40 text-center">
+                <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">Layers</span>
+                <span className="block text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">{selectedModel?.layers || '36'}</span>
+              </div>
+              <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/40 text-center">
+                <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">Parameters</span>
+                <span className="block text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">{selectedModel?.params || '3B'}</span>
+              </div>
+              <div className="bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700/40 text-center">
+                <span className="block text-[10px] uppercase tracking-wider font-semibold text-slate-400 dark:text-slate-500">Dataset</span>
+                <span className="block text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">{selectedModel?.dataset || 'UR50D'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 
+            ========================================================================
+            TEMPORARY: Commented out model selection UI as only ESM-2 (3B) is currently supported.
+            Other models (e.g., 15B, 650M, 150M, 35M, 8M, MSA) will be integrated in future phases.
+            ========================================================================
+          */}
+
+          {/* Mode Toggle (Commented Out)
           <div>
             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
               Analysis Mode
@@ -181,7 +242,7 @@ export const Parameters = () => {
                 <button
                   key={mode}
                   onClick={() => handleModeChange(mode)}
-                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors capitalize ${
+                  className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors capitalize \${
                     parameters.mode === mode
                       ? 'bg-blue-600 text-white'
                       : 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-50 hover:bg-slate-300 dark:hover:bg-slate-600'
@@ -192,8 +253,9 @@ export const Parameters = () => {
               ))}
             </div>
           </div>
+          */}
 
-          {/* Simple Mode: 3-Point Slider */}
+          {/* Simple Mode: 3-Point Slider (Commented Out)
           {parameters.mode === 'simple' && (
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
@@ -232,8 +294,9 @@ export const Parameters = () => {
               </p>
             </div>
           )}
+          */}
 
-          {/* Advanced Mode: Dropdown */}
+          {/* Advanced Mode: Dropdown (Commented Out)
           {parameters.mode === 'advanced' && (
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
@@ -251,7 +314,7 @@ export const Parameters = () => {
                 ))}
               </select>
 
-              {/* Model Info Accordion */}
+              Model Info Accordion
               <div className="mt-4 border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setExpandedAccordion(!expandedAccordion)}
@@ -261,7 +324,7 @@ export const Parameters = () => {
                     Model Information
                   </span>
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${
+                    className={`w-4 h-4 transition-transform \${
                       expandedAccordion ? 'rotate-180' : ''
                     }`}
                   />
@@ -309,6 +372,7 @@ export const Parameters = () => {
               </div>
             </div>
           )}
+          */}
         </div>
 
         {/* Right Column: Embeddings & Features */}

@@ -26,3 +26,7 @@ dist-ssr
 # Local documentation and plans
 README.md
 PLAN.MD
+
+# Local helper scripts
+push_to_crick.sh
+webapp_new_design.zip
